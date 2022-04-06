@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/bpmn")
 public class BpmnController {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
-    private BpmnService bpmnService;
+    private final BpmnService bpmnService;
 
     public BpmnController(BpmnService service) {
         this.bpmnService = service;
     }
 
     @GetMapping("")
-    public String testruntime() {
+    public String testRuntime() {
         return bpmnService.validate();
     }
 

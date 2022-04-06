@@ -8,4 +8,9 @@ camunda.bpm:
   admin-user:
     id: root
     password: root
+  run:
+    cors:
+      enabled: true
+      allowed-origins: "*"
   filter.create: All Tasks
+
