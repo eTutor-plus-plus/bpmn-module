@@ -1,69 +1,53 @@
 package ETutor.services;
 
-import ETutor.Application;
+import ETutor.services.user_Task.NameService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
 public class BpmnService {
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(BpmnService.class);
 
-    @Autowired
-    private ProcessEngine processEngine;
+    private final ProcessEngine processEngine;
+    private final RuntimeService runtimeService;
+    private final TaskService taskService;
+    //Custom services
+    private final NameService nameService;
+    private ProcessInstance instance;
 
-    public String validate() {
-        RuntimeService runtime = processEngine.getRuntimeService();
-        return this.checkTeacher(runtime) + this.checkProcess(runtime);
+    public BpmnService(ProcessEngine processEngine, RuntimeService runtimeService, TaskService taskService) {
+        this.processEngine = processEngine;
+        this.runtimeService = runtimeService;
+        this.taskService = taskService;
+        this.nameService = new NameService();
     }
 
-    private boolean checkName(Task task, String solution) {
-        return task.getName().equals(solution);
+    public boolean validate() {
+        try {
+            instance = runtimeService.startProcessInstanceByKey("Teacher");
+            boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
+//            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
+            logger.info("NameTest result: " + nameTestResult);
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            return nameTestResult;
+        } catch (Exception e) {
+            logger.info("Failed: " + e.getMessage());
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            return false;
+        }
     }
 
-    private String checkTeacher(RuntimeService runtime) {
-        ProcessInstance instance = runtime.startProcessInstanceByKey("Teacher");
-        TaskService taskservice = processEngine.getTaskService();
-        TaskQuery taskQuery = taskservice.createTaskQuery();
-        Task task = taskQuery.singleResult();
-        logger.info(task.getName());
-        boolean result = this.checkName(task, "Task1");
-        logger.info(String.valueOf(result));
-        logger.info("Before " + taskQuery.list().toString());
-        taskservice.complete(task.getId());
-        Task task2 = taskQuery.singleResult();
-        logger.info(task2.getName());
-        boolean result2 = this.checkName(task2, "Task2");
-        taskservice.complete(task2.getId());
-        logger.info("After " + taskQuery.list().toString());
-
-        return String.valueOf(result + "   " + result2);
-    }
-
-    private String checkProcess(RuntimeService runtime) {
-        ProcessInstance instance = runtime.startProcessInstanceByKey("BPMN-Modul-process");
-        TaskService taskservice = processEngine.getTaskService();
-        TaskQuery taskQuery = taskservice.createTaskQuery();
-        Task task = taskQuery.singleResult();
-        logger.info(task.getName());
-        boolean result = this.checkName(task, "a");
-        logger.info(String.valueOf(result));
-        logger.info("Before " + taskQuery.list().toString());
-        taskservice.complete(task.getId());
-        Task task2 = taskQuery.singleResult();
-        logger.info(task2.getName());
-        boolean result2 = this.checkName(task2, "b");
-        taskservice.complete(task2.getId());
-        logger.info("After " + taskQuery.list().toString());
-
-        return String.valueOf(result + "   " + result2);
-    }
+//
+//    private boolean checkTaskCount (int count) {
+//        logger.info(count + "  " +taskService.createTaskQuery().list().size());
+//        return taskService.createTaskQuery().count() == count;
+//    }
 }
