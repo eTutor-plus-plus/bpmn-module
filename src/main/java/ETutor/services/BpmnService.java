@@ -45,6 +45,22 @@ public class BpmnService {
         }
     }
 
+//    public boolean useConfig(TestConfig_Interface testConfig_interface) {
+//        try {
+//            instance = runtimeService.startProcessInstanceByKey("Teacher");
+//            boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
+////            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
+//            logger.info("NameTest result: " + nameTestResult);
+//            runtimeService.deleteProcessInstance(instance.getId(), null);
+//            return nameTestResult;
+//        } catch (Exception e) {
+//            logger.info("Failed: " + e.getMessage());
+//            runtimeService.deleteProcessInstance(instance.getId(), null);
+//            return false;
+//        }
+//    }
+
+
 //
 //    private boolean checkTaskCount (int count) {
 //        logger.info(count + "  " +taskService.createTaskQuery().list().size());

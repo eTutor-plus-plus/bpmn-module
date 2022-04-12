@@ -16,21 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class BpmnController {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private final BpmnService bpmnService;
-//    private final TestService testService;
 
     public BpmnController(BpmnService service, TestService testService) {
         this.bpmnService = service;
-//        this.testService = testService;
-    }
 
-//    @GetMapping("test")
-//    public String testRuntime() {
-//        return testService.validate();
-//    }
+    }
 
     @GetMapping("")
     public boolean testfnc() {
         return bpmnService.validate();
     }
-
 }
