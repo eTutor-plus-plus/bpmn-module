@@ -1,5 +1,7 @@
 package ETutor.services;
 
+import ETutor.jsonMapper.EntityClasses.TestConfigDTODTO;
+import ETutor.jsonMapper.JsonReader;
 import ETutor.services.user_Task.NameService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
@@ -45,20 +47,22 @@ public class BpmnService {
         }
     }
 
-//    public boolean useConfig(TestConfig_Interface testConfig_interface) {
-//        try {
-//            instance = runtimeService.startProcessInstanceByKey("Teacher");
-//            boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
-////            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
-//            logger.info("NameTest result: " + nameTestResult);
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            return nameTestResult;
-//        } catch (Exception e) {
-//            logger.info("Failed: " + e.getMessage());
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            return false;
-//        }
-//    }
+    public boolean useConfig() {
+        try {
+            instance = runtimeService.startProcessInstanceByKey("Teacher");
+            TestConfigDTODTO config = JsonReader.readJsonFile();
+            if (config == null) throw new RuntimeException("no config");
+            boolean nameTestResult = nameService.checkNameInProcessOrder(config.taskNames(), taskService);
+//            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
+            logger.info("NameTest result: " + nameTestResult);
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            return nameTestResult;
+        } catch (Exception e) {
+            logger.info("Failed: " + e.getMessage());
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            return false;
+        }
+    }
 
 
 //

@@ -24,6 +24,6 @@ public class BpmnController {
 
     @GetMapping("")
     public boolean testfnc() {
-        return bpmnService.validate();
+        return bpmnService.useConfig();
     }
 }
