@@ -5,7 +5,7 @@ import ETutor.jsonMapper.interfaces.TestConfigDTO_Interface;
 import java.util.List;
 import java.util.Objects;
 
-public class TestConfigDTODTO implements TestConfigDTO_Interface {
+public class TestConfigDTO implements TestConfigDTO_Interface {
     private List<String> taskNames;
 
     public List<String> taskNames() {
@@ -19,8 +19,8 @@ public class TestConfigDTODTO implements TestConfigDTO_Interface {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TestConfigDTODTO)) return false;
-        TestConfigDTODTO that = (TestConfigDTODTO) o;
+        if (!(o instanceof TestConfigDTO)) return false;
+        TestConfigDTO that = (TestConfigDTO) o;
         return Objects.equals(taskNames, that.taskNames);
     }
 

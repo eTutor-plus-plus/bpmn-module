@@ -1,6 +1,6 @@
 package ETutor.services;
 
-import ETutor.jsonMapper.EntityClasses.TestConfigDTODTO;
+import ETutor.jsonMapper.EntityClasses.TestConfigDTO;
 import ETutor.jsonMapper.JsonReader;
 import ETutor.services.user_Task.NameService;
 import org.camunda.bpm.engine.ProcessEngine;
@@ -50,7 +50,7 @@ public class BpmnService {
     public boolean useConfig() {
         try {
             instance = runtimeService.startProcessInstanceByKey("Teacher");
-            TestConfigDTODTO config = JsonReader.readJsonFile();
+            TestConfigDTO config = JsonReader.readJsonFile();
             if (config == null) throw new RuntimeException("no config");
             boolean nameTestResult = nameService.checkNameInProcessOrder(config.taskNames(), taskService);
 //            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
