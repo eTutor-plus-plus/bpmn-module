@@ -1,6 +1,5 @@
 package ETutor.services.test;
 
-import ETutor.Application;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TestService {
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestService.class);
 
     private final ProcessEngine processEngine;
     private final RuntimeService runtimeService;

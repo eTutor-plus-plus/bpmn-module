@@ -1,5 +1,8 @@
 package ETutor.services;
 
+import ETutor.config.ApplicationProperties;
+import ETutor.jsonMapper.EntityClasses.TestConfigDTO;
+import ETutor.jsonMapper.JsonReader;
 import ETutor.services.user_Task.NameService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
@@ -22,18 +25,41 @@ public class BpmnService {
     //Custom services
     private final NameService nameService;
     private ProcessInstance instance;
+    private ProcessInstance instance2;
+    private ApplicationProperties applicationProperties;
 
-    public BpmnService(ProcessEngine processEngine, RuntimeService runtimeService, TaskService taskService) {
+    public BpmnService(ProcessEngine processEngine, RuntimeService runtimeService, TaskService taskService, ApplicationProperties applicationProperties) {
         this.processEngine = processEngine;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.nameService = new NameService();
+        this.applicationProperties = applicationProperties;
     }
 
     public boolean validate() {
         try {
             instance = runtimeService.startProcessInstanceByKey("Teacher");
+            instance2 = runtimeService.startProcessInstanceByKey("BPMN-Modul-process");
             boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
+//            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
+            logger.info("NameTest result: " + nameTestResult);
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            runtimeService.deleteProcessInstance(instance2.getId(), null);
+            return nameTestResult;
+        } catch (Exception e) {
+            logger.info("Failed: " + e.getMessage());
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+            runtimeService.deleteProcessInstance(instance2.getId(), null);
+            return false;
+        }
+    }
+
+    public boolean useConfig() {
+        try {
+            instance = runtimeService.startProcessInstanceByKey("Teacher");
+            TestConfigDTO config = JsonReader.readJsonFile();
+            if (config == null) throw new RuntimeException("no config");
+            boolean nameTestResult = nameService.checkNameInProcessOrder(config.taskNames(), taskService);
 //            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
             logger.info("NameTest result: " + nameTestResult);
             runtimeService.deleteProcessInstance(instance.getId(), null);
@@ -44,21 +70,6 @@ public class BpmnService {
             return false;
         }
     }
-
-//    public boolean useConfig(TestConfig_Interface testConfig_interface) {
-//        try {
-//            instance = runtimeService.startProcessInstanceByKey("Teacher");
-//            boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
-////            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
-//            logger.info("NameTest result: " + nameTestResult);
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            return nameTestResult;
-//        } catch (Exception e) {
-//            logger.info("Failed: " + e.getMessage());
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            return false;
-//        }
-//    }
 
 
 //

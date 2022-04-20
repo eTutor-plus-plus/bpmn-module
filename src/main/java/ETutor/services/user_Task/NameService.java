@@ -17,23 +17,24 @@ public class NameService {
 
     public boolean checkNameInProcessOrder(List<String> names, TaskService taskService) {
         TaskQuery taskQuery = taskService.createTaskQuery();
-        boolean result = true;
         for (String name : names) {
             name = name.trim();
             if (taskQuery.list().size() == 1) {
                 Task task = taskQuery.singleResult();
-                if (this.checkTask(task, name)) return false;
+                if (this.taskNameNotEqual(task, name)) return false;
                 taskService.complete(task.getId());
             } else {
                 for (Task task : taskQuery.list()) {
+                    logger.info("Except:" + task.getName() + " compare with " + name);
                     if (task.getName().equals(name)) {
-                        if (this.checkTask(task, name)) return false;
                         taskService.complete(task.getId());
+                        return true;
                     }
                 }
+                return false;
             }
         }
-        return true;
+        return false;
     }
 
 //    public boolean findTasks(List<String> names, TaskService taskService) {
@@ -46,7 +47,7 @@ public class NameService {
 //        return true;
 //    }
 
-    private boolean checkTask(Task task, String name) {
+    private boolean taskNameNotEqual(Task task, String name) {
         logger.info("Except:" + task.getName() + " compare with " + name);
         return !task.getName().equals(name);
     }
