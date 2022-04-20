@@ -1,6 +1,5 @@
 package ETutor.controller;
 
-import ETutor.Application;
 import ETutor.services.BpmnService;
 import ETutor.services.test.TestService;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/bpmn")
 public class BpmnController {
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(BpmnController.class);
     private final BpmnService bpmnService;
 
     public BpmnController(BpmnService service, TestService testService) {

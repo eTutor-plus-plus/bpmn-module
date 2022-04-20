@@ -7,7 +7,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(value = "application")
 public class ApplicationProperties {
-    private String testString;
-    
+    private static String JsonTestPath;
+
+
+    public static String getJsonTestPath() {
+        return JsonTestPath;
+    }
+
+    public void setJsonTestPath(String jsonTestPath) {
+        JsonTestPath = jsonTestPath;
+    }
+
 
 }

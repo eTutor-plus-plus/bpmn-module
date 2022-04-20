@@ -8,10 +8,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 //@EnableProcessApplication
 @EnableConfigurationProperties({ApplicationProperties.class})
 @SpringBootApplication
-public class Application {
+public class BpmnApplication {
 
     public static void main(String... args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(BpmnApplication.class, args);
     }
 
 }

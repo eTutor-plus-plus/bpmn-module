@@ -1,5 +1,6 @@
 package ETutor.jsonMapper;
 
+import ETutor.config.ApplicationProperties;
 import ETutor.jsonMapper.EntityClasses.TestConfigDTO;
 import ETutor.services.BpmnService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,7 @@ public class JsonReader {
 
     public static TestConfigDTO readJsonFile() {
         try {
-            TestConfigDTO testConfigDTO = objectMapper.readValue(new File("src/main/resources/JsonTestFiles/testfile.json"), TestConfigDTO.class);
+            TestConfigDTO testConfigDTO = objectMapper.readValue(new File(ApplicationProperties.getJsonTestPath()), TestConfigDTO.class);
             logger.info(testConfigDTO.toString());
             return testConfigDTO;
         } catch (Exception e) {

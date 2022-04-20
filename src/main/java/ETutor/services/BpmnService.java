@@ -1,5 +1,6 @@
 package ETutor.services;
 
+import ETutor.config.ApplicationProperties;
 import ETutor.jsonMapper.EntityClasses.TestConfigDTO;
 import ETutor.jsonMapper.JsonReader;
 import ETutor.services.user_Task.NameService;
@@ -24,25 +25,31 @@ public class BpmnService {
     //Custom services
     private final NameService nameService;
     private ProcessInstance instance;
+    private ProcessInstance instance2;
+    private ApplicationProperties applicationProperties;
 
-    public BpmnService(ProcessEngine processEngine, RuntimeService runtimeService, TaskService taskService) {
+    public BpmnService(ProcessEngine processEngine, RuntimeService runtimeService, TaskService taskService, ApplicationProperties applicationProperties) {
         this.processEngine = processEngine;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.nameService = new NameService();
+        this.applicationProperties = applicationProperties;
     }
 
     public boolean validate() {
         try {
             instance = runtimeService.startProcessInstanceByKey("Teacher");
+            instance2 = runtimeService.startProcessInstanceByKey("BPMN-Modul-process");
             boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
 //            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
             logger.info("NameTest result: " + nameTestResult);
             runtimeService.deleteProcessInstance(instance.getId(), null);
+            runtimeService.deleteProcessInstance(instance2.getId(), null);
             return nameTestResult;
         } catch (Exception e) {
             logger.info("Failed: " + e.getMessage());
             runtimeService.deleteProcessInstance(instance.getId(), null);
+            runtimeService.deleteProcessInstance(instance2.getId(), null);
             return false;
         }
     }

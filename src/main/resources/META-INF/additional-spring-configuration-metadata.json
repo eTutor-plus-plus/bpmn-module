@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "application.JsonTestPath",
+      "type": "java.lang.String",
+      "description": "Description for application.JsonTestPath."
+    }
+  ]
+}
