@@ -38,22 +38,29 @@ public class BpmnService {
     public TestEngineDTO startTest(String key, TestConfig testConfig) {
         TestConfig testConfigDTO;
         try {
+            this.startProcess(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TestEngineDTO testEngineDTO;
+        try {
             if (testConfig == null) {
                 throw new Exception("no Config");
             } else testConfigDTO = testConfig;
-            this.startProcess(key);
-            TestEngineDTO testEngineDTO = this.startTestEngine(testConfigDTO);
-            this.deleteProcess(key);
-            logger.info(testEngineDTO.toString());
-            return testEngineDTO;
+            testEngineDTO = this.startTestEngine(testConfigDTO);
+//            logger.info(testEngineDTO.toString());
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
-            runtimeService.deleteProcessInstance(instance.getId(), null);
+            if (instance != null)
+                runtimeService.deleteProcessInstance(instance.getId(), null);
             return null;
         }
+        this.deleteProcess(key);
+        logger.info(testEngineDTO.toString());
+        return testEngineDTO;
     }
 
-    public boolean startTest(String key) {
+    public boolean startTestWithOutRestJson(String key) {
         try {
             this.startProcess(key);
             TestConfig testConfigDTO = this.readConfig();
@@ -63,20 +70,22 @@ public class BpmnService {
             return true;
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
-            runtimeService.deleteProcessInstance(instance.getId(), null);
+            if (instance != null)
+                runtimeService.deleteProcessInstance(instance.getId(), null);
             return false;
         }
     }
 
     private void startProcess(String key) throws Exception {
         logger.info("Start Process by: " + key);
-        instance = runtimeService.startProcessInstanceByKey("Teacher");
+        instance = runtimeService.startProcessInstanceByKey(key);
         if (instance == null) throw new Exception("No Process with Process ID: " + key + " is deployed");
     }
 
     private void deleteProcess(String key) {
         logger.info("Delete Process by: " + key);
-        runtimeService.deleteProcessInstance(instance.getId(), null);
+        // TODO if process end not check this
+        if (instance.isSuspended()) runtimeService.deleteProcessInstance(instance.getId(), null);
     }
 
     private TestConfig readConfig() throws Exception {

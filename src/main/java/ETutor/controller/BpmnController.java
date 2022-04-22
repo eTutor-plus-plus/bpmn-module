@@ -24,26 +24,10 @@ public class BpmnController {
     public boolean startTestEngine() {
         String startkey = "Teacher";
         logger.info(logger.getName() + "start Test!");
-        boolean testResult = bpmnService.startTest(startkey);
+        boolean testResult = bpmnService.startTestWithOutRestJson(startkey);
         logger.info("Test result: " + testResult);
         return testResult;
     }
-
-//    @PostMapping("")
-//    public TestEngineDTO startTestEngine(
-//            @Valid @RequestBody TestConfig testConfig
-//    ) {
-//        String processID = "Teacher";
-//        logger.info(logger.getName() + "start Test!");
-//        TestEngineDTO testResult = null;
-//        try {
-//            testResult = bpmnService.startTest(processID, testConfig);
-//        } catch (Exception e) {
-//            logger.warn("Failed: Exception " + e.getMessage());
-//        }
-//        logger.info("Test result: " + testResult);
-//        return testResult;
-//    }
 
     @PostMapping("")
     public TestEngineDTO startTestEngine(
@@ -51,7 +35,7 @@ public class BpmnController {
             @Valid @RequestBody TestConfig testConfig
     ) {
         if (processID == null || processID.isBlank()) return null;
-        logger.info(logger.getName() + "start Test!");
+        logger.info("Start Test with ID: " + processID);
         TestEngineDTO testResult = null;
         try {
             testResult = bpmnService.startTest(processID, testConfig);

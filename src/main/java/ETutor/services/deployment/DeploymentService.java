@@ -21,12 +21,13 @@ public class DeploymentService {
     public String deployNewBpmn() throws IOException {
         Response response;
         try {
+            File file = new File("doc/bpmnTestDeploy/TestBpmn.bpmn");
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
-            MediaType mediaType = MediaType.parse("multipart/form-data");
+//            MediaType mediaType = MediaType.parse("multipart/form-data");
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("upload", "/C:/Users/Dominik/Postman Agent/files/Teacher2.bpmn",
-                            RequestBody.create(new File("doc/bpmnTestDeploy/test_invalid.bpmn"), MediaType.parse("application/octet-stream")))
+                    .addFormDataPart("upload", "TestBpmn.bpmn",
+                            RequestBody.create(file, MediaType.parse("application/octet-stream")))
                     .build();
             Request request = new Request.Builder()
                     .url("http://localhost:8080/engine-rest/deployment/create")
