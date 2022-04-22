@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/deployment")
@@ -20,7 +22,12 @@ public class DeployController {
     }
 
     @PostMapping("")
-    public boolean deployBPMN() {
-        return deploymentService.deployNewBpmn();
+    public String deployBPMN() {
+        try {
+            return deploymentService.deployNewBpmn();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Deployment failed";
     }
 }

@@ -1,13 +1,16 @@
-package ETutor.services.user_Task;
+package ETutor.services.rules.user_Task;
 
+import ETutor.dto.instances.TestEngineDTO;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class NameService {
     private static final Logger logger = LoggerFactory.getLogger(NameService.class);
 
@@ -15,7 +18,7 @@ public class NameService {
         logger.info(logger.getName() + "- is started");
     }
 
-    public boolean checkNameInProcessOrder(List<String> names, TaskService taskService) {
+    public boolean checkNameInProcessOrder(List<String> names, TestEngineDTO testEngineDTO, TaskService taskService) {
         TaskQuery taskQuery = taskService.createTaskQuery();
         for (String name : names) {
             name = name.trim();
@@ -37,7 +40,11 @@ public class NameService {
         return false;
     }
 
-//    public boolean findTasks(List<String> names, TaskService taskService) {
+    private boolean taskNameNotEqual(Task task, String name) {
+        logger.info("Except:" + task.getName() + " compare with " + name);
+        return !task.getName().equals(name);
+    }
+    //    public boolean findTasks(List<String> names, TaskService taskService) {
 //        TaskQuery taskQuery = taskService.createTaskQuery();
 //        for (String name : names) {
 //            Task t = taskQuery.taskName(name).singleResult();
@@ -46,9 +53,4 @@ public class NameService {
 //        }
 //        return true;
 //    }
-
-    private boolean taskNameNotEqual(Task task, String name) {
-        logger.info("Except:" + task.getName() + " compare with " + name);
-        return !task.getName().equals(name);
-    }
 }

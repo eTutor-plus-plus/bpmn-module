@@ -1,13 +1,13 @@
 package ETutor.controller;
 
+import ETutor.dto.entities.TestConfig;
+import ETutor.dto.instances.TestEngineDTO;
 import ETutor.services.BpmnService;
-import ETutor.services.test.TestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @CrossOrigin
 @RestController
@@ -16,13 +16,49 @@ public class BpmnController {
     private static final Logger logger = LoggerFactory.getLogger(BpmnController.class);
     private final BpmnService bpmnService;
 
-    public BpmnController(BpmnService service, TestService testService) {
+    public BpmnController(BpmnService service) {
         this.bpmnService = service;
-
     }
 
     @GetMapping("")
-    public boolean testfnc() {
-        return bpmnService.useConfig();
+    public boolean startTestEngine() {
+        String startkey = "Teacher";
+        logger.info(logger.getName() + "start Test!");
+        boolean testResult = bpmnService.startTest(startkey);
+        logger.info("Test result: " + testResult);
+        return testResult;
+    }
+
+//    @PostMapping("")
+//    public TestEngineDTO startTestEngine(
+//            @Valid @RequestBody TestConfig testConfig
+//    ) {
+//        String processID = "Teacher";
+//        logger.info(logger.getName() + "start Test!");
+//        TestEngineDTO testResult = null;
+//        try {
+//            testResult = bpmnService.startTest(processID, testConfig);
+//        } catch (Exception e) {
+//            logger.warn("Failed: Exception " + e.getMessage());
+//        }
+//        logger.info("Test result: " + testResult);
+//        return testResult;
+//    }
+
+    @PostMapping("")
+    public TestEngineDTO startTestEngine(
+            @RequestParam String processID,
+            @Valid @RequestBody TestConfig testConfig
+    ) {
+        if (processID == null || processID.isBlank()) return null;
+        logger.info(logger.getName() + "start Test!");
+        TestEngineDTO testResult = null;
+        try {
+            testResult = bpmnService.startTest(processID, testConfig);
+        } catch (Exception e) {
+            logger.warn("Failed: Exception " + e.getMessage());
+        }
+        logger.info("Test result: " + testResult);
+        return testResult;
     }
 }

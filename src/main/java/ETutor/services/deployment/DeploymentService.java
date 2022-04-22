@@ -1,12 +1,13 @@
 package ETutor.services.deployment;
 
-import ETutor.services.user_Task.NameService;
+import ETutor.services.rules.user_Task.NameService;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 @Service
@@ -17,8 +18,8 @@ public class DeploymentService {
         logger.info(logger.getName() + "- is started");
     }
 
-    public boolean deployNewBpmn() {
-        Response response = null;
+    public String deployNewBpmn() throws IOException {
+        Response response;
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
@@ -33,12 +34,13 @@ public class DeploymentService {
                     .addHeader("Content-Type", "multipart/form-data")
                     .build();
             response = client.newCall(request).execute();
-            if (response.body() != null)
-                logger.info("---Deployed!---" + Objects.requireNonNull(response.body()).string());
+            if (response.body() != null) {
+                logger.info("---Deployed!---");
+                return Objects.requireNonNull(response.body()).string();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (response != null) return response.isSuccessful();
-        return false;
+        return "Deployment failed";
     }
 }

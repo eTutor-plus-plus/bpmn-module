@@ -1,7 +1,7 @@
-package ETutor.jsonMapper;
+package ETutor.dto;
 
 import ETutor.config.ApplicationProperties;
-import ETutor.jsonMapper.EntityClasses.TestConfigDTO;
+import ETutor.dto.entities.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +12,10 @@ public class JsonReader {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(JsonReader.class);
 
-    public static TestConfigDTO readJsonFile() {
+    public static TestConfig readStaticJsonFile() {
         try {
-            TestConfigDTO testConfigDTO = objectMapper.readValue(new File(ApplicationProperties.getJsonTestPath()), TestConfigDTO.class);
+            File file = new File(ApplicationProperties.getJsonTestPath());
+            TestConfig testConfigDTO = objectMapper.readValue(file, TestConfig.class);
             logger.info(testConfigDTO.toString());
             return testConfigDTO;
         } catch (Exception e) {
