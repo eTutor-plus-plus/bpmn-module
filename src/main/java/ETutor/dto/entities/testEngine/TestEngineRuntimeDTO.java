@@ -3,6 +3,7 @@ package ETutor.dto.entities.testEngine;
 public class TestEngineRuntimeDTO {
 
     private boolean processInOrder = false;
+    private boolean containsAllLabels = false;
     private boolean processHaveParallelGateway = false;
     private boolean canReachLastTask = false;
 
@@ -33,10 +34,19 @@ public class TestEngineRuntimeDTO {
         this.canReachLastTask = canReachLastTask;
     }
 
+    public boolean isContainsAllLabels() {
+        return containsAllLabels;
+    }
+
+    public void setContainsAllLabels(boolean containsAllLabels) {
+        this.containsAllLabels = containsAllLabels;
+    }
+
     @Override
     public String toString() {
         return "TestEngineRuntimeDTO{" +
                 "processInOrder=" + processInOrder +
+                ", containsAllLabels=" + containsAllLabels +
                 ", processHaveParallelGateway=" + processHaveParallelGateway +
                 ", canReachLastTask=" + canReachLastTask +
                 '}';

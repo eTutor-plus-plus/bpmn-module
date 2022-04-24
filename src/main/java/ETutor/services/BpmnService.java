@@ -47,7 +47,7 @@ public class BpmnService {
             if (testConfig == null) {
                 throw new Exception("no Config");
             } else testConfigDTO = testConfig;
-            testEngineDTO = this.startTestEngine(testConfigDTO);
+            testEngineDTO = this.startTestEngine(key, testConfigDTO);
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
             if (instance != null)
@@ -63,7 +63,7 @@ public class BpmnService {
         try {
             this.startProcess(key);
             TestConfigDTO testConfigDTO = this.readConfig();
-            TestEngineDTO testEngineDTO = this.startTestEngine(testConfigDTO);
+            TestEngineDTO testEngineDTO = this.startTestEngine(key, testConfigDTO);
             this.deleteProcess(key, testEngineDTO);
             logger.info(testEngineDTO.toString());
             return true;
@@ -83,7 +83,6 @@ public class BpmnService {
 
     private void deleteProcess(String key, TestEngineDTO testEngineDTO) {
         logger.info("Delete Process by: " + key);
-        // TODO if process end not check this
         if (runtimeService.createProcessInstanceQuery().list().size() == 0) {
             testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
         } else {
@@ -103,11 +102,16 @@ public class BpmnService {
         throw new Exception("no Config");
     }
 
-    private TestEngineDTO startTestEngine(TestConfigDTO testConfigDTO) {
+    private TestEngineDTO startTestEngine(String key, TestConfigDTO testConfigDTO) throws Exception {
         TestEngineDTO testEngineDTO = new TestEngineDTO(counter);
         counter++;
-        if (testConfigDTO.taskNames().size() != 0) {
-            testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.taskNames(), testEngineDTO, taskService));
+        if (testConfigDTO.getTaskNames() != null && testConfigDTO.getTaskNames().size() != 0) {
+            testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTaskNames(), testEngineDTO, taskService));
+        }
+        if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
+            this.deleteProcess(key, testEngineDTO);
+            this.startProcess(key);
+            testEngineDTO.testEngineRuntimeDTO.setContainsAllLabels(engineTaskService.tasksInProcess(testConfigDTO.getLabels(), testEngineDTO, taskService));
         }
         return testEngineDTO;
     }

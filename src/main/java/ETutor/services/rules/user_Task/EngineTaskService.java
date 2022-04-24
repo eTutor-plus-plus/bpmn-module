@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EngineTaskService {
@@ -40,6 +42,35 @@ public class EngineTaskService {
             }
         }
         return result;
+    }
+
+    public boolean tasksInProcess(List<String> names, TestEngineDTO testEngineDTO, TaskService taskService) {
+        TaskQuery taskQuery = taskService.createTaskQuery();
+        Map<String, Boolean> map = new Hashtable<>();
+        names.forEach(k -> map.put(k, false));
+        while (taskQuery.list().size() != 0) {
+            if (taskQuery.list().size() == 1) {
+                Task task = taskQuery.singleResult();
+                for (String s : map.keySet()) {
+                    if (s.equals(task.getName())) {
+                        logger.info("Except:" + task.getName());
+                        map.put(task.getName(), true);
+                    }
+                }
+                taskService.complete(task.getId());
+            } else {
+                testEngineDTO.testEngineRuntimeDTO.setProcessHaveParallelGateway(true);
+                for (Task task : taskQuery.list()) {
+                    for (String s : map.keySet()) {
+                        if (s.equals(task.getName())) {
+                            map.put(task.getName(), true);
+                        }
+                    }
+                    taskService.complete(task.getId());
+                }
+            }
+        }
+        return !map.containsValue(false);
     }
 
     private boolean taskNameNotEqual(Task task, String name) {
