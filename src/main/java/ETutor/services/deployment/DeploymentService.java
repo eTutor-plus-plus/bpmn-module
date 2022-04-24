@@ -1,6 +1,6 @@
 package ETutor.services.deployment;
 
-import ETutor.services.rules.user_Task.NameService;
+import ETutor.services.rules.user_Task.EngineTaskService;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Service
 public class DeploymentService {
-    private static final Logger logger = LoggerFactory.getLogger(NameService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EngineTaskService.class);
 
     public DeploymentService() {
         logger.info(logger.getName() + "- is started");

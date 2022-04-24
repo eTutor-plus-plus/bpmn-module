@@ -1,7 +1,7 @@
 package ETutor.controller;
 
-import ETutor.dto.entities.TestConfig;
-import ETutor.dto.instances.TestEngineDTO;
+import ETutor.dto.entities.TestConfigDTO;
+import ETutor.dto.entities.TestEngineDTO;
 import ETutor.services.BpmnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +32,13 @@ public class BpmnController {
     @PostMapping("")
     public TestEngineDTO startTestEngine(
             @RequestParam String processID,
-            @Valid @RequestBody TestConfig testConfig
+            @Valid @RequestBody TestConfigDTO testConfigDTO
     ) {
         if (processID == null || processID.isBlank()) return null;
         logger.info("Start Test with ID: " + processID);
         TestEngineDTO testResult = null;
         try {
-            testResult = bpmnService.startTest(processID, testConfig);
+            testResult = bpmnService.startTest(processID, testConfigDTO);
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
         }

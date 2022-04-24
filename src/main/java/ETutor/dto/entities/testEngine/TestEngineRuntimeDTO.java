@@ -1,16 +1,12 @@
-package ETutor.dto.instances;
+package ETutor.dto.entities.testEngine;
 
-public class TestEngineDTO {
-    private final long id;
+public class TestEngineRuntimeDTO {
+
     private boolean processInOrder = false;
     private boolean processHaveParallelGateway = false;
+    private boolean canReachLastTask = false;
 
-    public TestEngineDTO(long id) {
-        this.id = id;
-    }
-
-    public long getId() {
-        return id;
+    public TestEngineRuntimeDTO() {
     }
 
     public boolean isProcessInOrder() {
@@ -29,12 +25,20 @@ public class TestEngineDTO {
         this.processHaveParallelGateway = processHaveParallelGateway;
     }
 
+    public boolean isCanReachLastTask() {
+        return canReachLastTask;
+    }
+
+    public void setCanReachLastTask(boolean canReachLastTask) {
+        this.canReachLastTask = canReachLastTask;
+    }
+
     @Override
     public String toString() {
-        return "TestEngine{" +
-                "id=" + id +
-                ", processInOrder=" + processInOrder +
+        return "TestEngineRuntimeDTO{" +
+                "processInOrder=" + processInOrder +
                 ", processHaveParallelGateway=" + processHaveParallelGateway +
+                ", canReachLastTask=" + canReachLastTask +
                 '}';
     }
 }

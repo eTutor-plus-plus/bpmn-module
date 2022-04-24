@@ -1,6 +1,6 @@
 package ETutor.services.rules.user_Task;
 
-import ETutor.dto.instances.TestEngineDTO;
+import ETutor.dto.entities.TestEngineDTO;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
@@ -11,15 +11,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class NameService {
-    private static final Logger logger = LoggerFactory.getLogger(NameService.class);
+public class EngineTaskService {
+    private static final Logger logger = LoggerFactory.getLogger(EngineTaskService.class);
 
-    public NameService() {
+    public EngineTaskService() {
         logger.info(logger.getName() + "- is started");
     }
 
     public boolean checkNameInProcessOrder(List<String> names, TestEngineDTO testEngineDTO, TaskService taskService) {
         TaskQuery taskQuery = taskService.createTaskQuery();
+        boolean result = true;
         for (String name : names) {
             name = name.trim();
             if (taskQuery.list().size() == 1) {
@@ -27,17 +28,18 @@ public class NameService {
                 if (this.taskNameNotEqual(task, name)) return false;
                 taskService.complete(task.getId());
             } else {
+                result = false;
+                testEngineDTO.testEngineRuntimeDTO.setProcessHaveParallelGateway(true);
                 for (Task task : taskQuery.list()) {
                     logger.info("Except:" + task.getName() + " compare with " + name);
                     if (task.getName().equals(name)) {
                         taskService.complete(task.getId());
-                        return true;
+                        result = true;
                     }
                 }
-                return false;
             }
         }
-        return false;
+        return result;
     }
 
     private boolean taskNameNotEqual(Task task, String name) {

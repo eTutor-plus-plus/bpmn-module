@@ -4,7 +4,7 @@ import ETutor.dto.interfaces.TestConfig_Interface;
 
 import java.util.List;
 
-public class TestConfig implements TestConfig_Interface {
+public class TestConfigDTO implements TestConfig_Interface {
     private List<String> taskNames;
 
     public List<String> taskNames() {

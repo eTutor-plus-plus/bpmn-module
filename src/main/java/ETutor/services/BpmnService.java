@@ -1,9 +1,9 @@
 package ETutor.services;
 
 import ETutor.dto.JsonReader;
-import ETutor.dto.entities.TestConfig;
-import ETutor.dto.instances.TestEngineDTO;
-import ETutor.services.rules.user_Task.NameService;
+import ETutor.dto.entities.TestConfigDTO;
+import ETutor.dto.entities.TestEngineDTO;
+import ETutor.services.rules.user_Task.EngineTaskService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -23,20 +23,20 @@ public class BpmnService {
     private final RuntimeService runtimeService;
     private final TaskService taskService;
     //Custom services
-    private final NameService nameService;
+    private final EngineTaskService engineTaskService;
     private ProcessInstance instance;
 //    private ProcessInstance instance2;
 //    private ApplicationProperties applicationProperties;
 
-    public BpmnService(RuntimeService runtimeService, TaskService taskService, NameService nameService) {
+    public BpmnService(RuntimeService runtimeService, TaskService taskService, EngineTaskService engineTaskService) {
         counter = 0;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
-        this.nameService = nameService;
+        this.engineTaskService = engineTaskService;
     }
 
-    public TestEngineDTO startTest(String key, TestConfig testConfig) {
-        TestConfig testConfigDTO;
+    public TestEngineDTO startTest(String key, TestConfigDTO testConfig) {
+        TestConfigDTO testConfigDTO;
         try {
             this.startProcess(key);
         } catch (Exception e) {
@@ -48,14 +48,13 @@ public class BpmnService {
                 throw new Exception("no Config");
             } else testConfigDTO = testConfig;
             testEngineDTO = this.startTestEngine(testConfigDTO);
-//            logger.info(testEngineDTO.toString());
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
             if (instance != null)
                 runtimeService.deleteProcessInstance(instance.getId(), null);
             return null;
         }
-        this.deleteProcess(key);
+        this.deleteProcess(key, testEngineDTO);
         logger.info(testEngineDTO.toString());
         return testEngineDTO;
     }
@@ -63,9 +62,9 @@ public class BpmnService {
     public boolean startTestWithOutRestJson(String key) {
         try {
             this.startProcess(key);
-            TestConfig testConfigDTO = this.readConfig();
+            TestConfigDTO testConfigDTO = this.readConfig();
             TestEngineDTO testEngineDTO = this.startTestEngine(testConfigDTO);
-            this.deleteProcess(key);
+            this.deleteProcess(key, testEngineDTO);
             logger.info(testEngineDTO.toString());
             return true;
         } catch (Exception e) {
@@ -82,16 +81,20 @@ public class BpmnService {
         if (instance == null) throw new Exception("No Process with Process ID: " + key + " is deployed");
     }
 
-    private void deleteProcess(String key) {
+    private void deleteProcess(String key, TestEngineDTO testEngineDTO) {
         logger.info("Delete Process by: " + key);
         // TODO if process end not check this
-        if (instance.isSuspended()) runtimeService.deleteProcessInstance(instance.getId(), null);
+        if (runtimeService.createProcessInstanceQuery().list().size() == 0) {
+            testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
+        } else {
+            runtimeService.deleteProcessInstance(instance.getId(), null);
+        }
     }
 
-    private TestConfig readConfig() throws Exception {
+    private TestConfigDTO readConfig() throws Exception {
         try {
             logger.info("Start read JSON file");
-            TestConfig config = JsonReader.readStaticJsonFile();
+            TestConfigDTO config = JsonReader.readStaticJsonFile();
             if (config == null) throw new IOException("no config");
             return config;
         } catch (IOException e) {
@@ -100,11 +103,11 @@ public class BpmnService {
         throw new Exception("no Config");
     }
 
-    private TestEngineDTO startTestEngine(TestConfig testConfigDTO) {
+    private TestEngineDTO startTestEngine(TestConfigDTO testConfigDTO) {
         TestEngineDTO testEngineDTO = new TestEngineDTO(counter);
         counter++;
         if (testConfigDTO.taskNames().size() != 0) {
-            testEngineDTO.setProcessInOrder(nameService.checkNameInProcessOrder(testConfigDTO.taskNames(), testEngineDTO, taskService));
+            testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.taskNames(), testEngineDTO, taskService));
         }
         return testEngineDTO;
     }
