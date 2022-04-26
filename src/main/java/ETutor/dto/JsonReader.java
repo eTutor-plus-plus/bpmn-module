@@ -10,11 +10,16 @@ import java.io.File;
 
 public class JsonReader {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final ApplicationProperties applicationProperties;
     private static final Logger logger = LoggerFactory.getLogger(JsonReader.class);
 
-    public static TestConfigDTO readStaticJsonFile() {
+    public JsonReader(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
+
+    public TestConfigDTO readStaticJsonFile() {
         try {
-            File file = new File(ApplicationProperties.getJsonTestPath());
+            File file = new File(applicationProperties.getJsonReader().getJsonTestPath());
             TestConfigDTO testConfigDTO = objectMapper.readValue(file, TestConfigDTO.class);
             logger.info(testConfigDTO.toString());
             return testConfigDTO;

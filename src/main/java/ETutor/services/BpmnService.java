@@ -1,9 +1,10 @@
 package ETutor.services;
 
+import ETutor.config.ApplicationProperties;
 import ETutor.dto.JsonReader;
 import ETutor.dto.entities.TestConfigDTO;
 import ETutor.dto.entities.TestEngineDTO;
-import ETutor.services.rules.user_Task.EngineTaskService;
+import ETutor.services.rules.tasks.EngineTaskService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -25,14 +26,15 @@ public class BpmnService {
     //Custom services
     private final EngineTaskService engineTaskService;
     private ProcessInstance instance;
-//    private ProcessInstance instance2;
-//    private ApplicationProperties applicationProperties;
+    //    private ProcessInstance instance2;
+    private final ApplicationProperties applicationProperties;
 
-    public BpmnService(RuntimeService runtimeService, TaskService taskService, EngineTaskService engineTaskService) {
+    public BpmnService(ApplicationProperties applicationProperties, RuntimeService runtimeService, TaskService taskService, EngineTaskService engineTaskService) {
         counter = 0;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.engineTaskService = engineTaskService;
+        this.applicationProperties = applicationProperties;
     }
 
     public TestEngineDTO startTest(String key, TestConfigDTO testConfig) {
@@ -41,6 +43,8 @@ public class BpmnService {
             this.startProcess(key);
         } catch (Exception e) {
             e.printStackTrace();
+            counter++;
+            return new TestEngineDTO(counter);
         }
         TestEngineDTO testEngineDTO;
         try {
@@ -50,9 +54,11 @@ public class BpmnService {
             testEngineDTO = this.startTestEngine(key, testConfigDTO);
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());
-            if (instance != null)
+            if (runtimeService.createProcessInstanceQuery().list().size() != 0) {
                 runtimeService.deleteProcessInstance(instance.getId(), null);
-            return null;
+            }
+            counter++;
+            return new TestEngineDTO(counter);
         }
         this.deleteProcess(key, testEngineDTO);
         logger.info(testEngineDTO.toString());
@@ -93,7 +99,7 @@ public class BpmnService {
     private TestConfigDTO readConfig() throws Exception {
         try {
             logger.info("Start read JSON file");
-            TestConfigDTO config = JsonReader.readStaticJsonFile();
+            TestConfigDTO config = new JsonReader(applicationProperties).readStaticJsonFile();
             if (config == null) throw new IOException("no config");
             return config;
         } catch (IOException e) {
@@ -105,37 +111,16 @@ public class BpmnService {
     private TestEngineDTO startTestEngine(String key, TestConfigDTO testConfigDTO) throws Exception {
         TestEngineDTO testEngineDTO = new TestEngineDTO(counter);
         counter++;
-        if (testConfigDTO.getTaskNames() != null && testConfigDTO.getTaskNames().size() != 0) {
-            testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTaskNames(), testEngineDTO, taskService));
-        }
-        if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
-            this.deleteProcess(key, testEngineDTO);
-            this.startProcess(key);
-            testEngineDTO.testEngineRuntimeDTO.setContainsAllLabels(engineTaskService.tasksInProcess(testConfigDTO.getLabels(), testEngineDTO, taskService));
+        if (applicationProperties.getDeployment().isRuntimeStarted()) {
+            if (testConfigDTO.getTaskNames() != null && testConfigDTO.getTaskNames().size() != 0) {
+                testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTaskNames(), testEngineDTO, taskService));
+            }
+            if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
+                this.deleteProcess(key, testEngineDTO);
+                this.startProcess(key);
+                testEngineDTO.testEngineRuntimeDTO.setContainsAllLabels(engineTaskService.tasksInProcess(testConfigDTO.getLabels(), testEngineDTO, taskService));
+            }
         }
         return testEngineDTO;
     }
 }
-
-//    public boolean validate() {
-//        try {
-//            instance = runtimeService.startProcessInstanceByKey("Teacher");
-//            instance2 = runtimeService.startProcessInstanceByKey("BPMN-Modul-process");
-//            boolean nameTestResult = nameService.checkNameInProcessOrder(List.of("Task1", "Task3      "), taskService);
-////            boolean nameTestResult = nameService.findTasks(List.of("Task1", "Task2"), taskService);
-//            logger.info("NameTest result: " + nameTestResult);
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            runtimeService.deleteProcessInstance(instance2.getId(), null);
-//            return nameTestResult;
-//        } catch (Exception e) {
-//            logger.info("Failed: " + e.getMessage());
-//            runtimeService.deleteProcessInstance(instance.getId(), null);
-//            runtimeService.deleteProcessInstance(instance2.getId(), null);
-//            return false;
-//        }
-//    }
-//
-//    private boolean checkTaskCount (int count) {
-//        logger.info(count + "  " +taskService.createTaskQuery().list().size());
-//        return taskService.createTaskQuery().count() == count;
-//    }
