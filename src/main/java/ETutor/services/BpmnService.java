@@ -112,8 +112,8 @@ public class BpmnService {
         TestEngineDTO testEngineDTO = new TestEngineDTO(counter);
         counter++;
         if (applicationProperties.getDeployment().isRuntimeStarted()) {
-            if (testConfigDTO.getTaskNames() != null && testConfigDTO.getTaskNames().size() != 0) {
-                testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTaskNames(), testEngineDTO, taskService));
+            if (testConfigDTO.getTasksInCorrectOrder() != null && testConfigDTO.getTasksInCorrectOrder().size() != 0) {
+                testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTasksInCorrectOrder(), testEngineDTO, taskService));
             }
             if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
                 this.deleteProcess(key, testEngineDTO);

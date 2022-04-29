@@ -3,10 +3,7 @@ package ETutor.controller;
 import ETutor.services.deployment.DeploymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -21,7 +18,7 @@ public class DeployController {
         this.deploymentService = deploymentService;
     }
 
-    @PostMapping("")
+    @PostMapping("/static")
     public String deployBPMN() {
         try {
             return deploymentService.deployNewBpmn();
@@ -30,4 +27,28 @@ public class DeployController {
         }
         return "Deployment failed";
     }
+
+    @PostMapping(path = "")
+    public String deployBPMN(@RequestBody String bpmnXml) {
+        try {
+            String result = deploymentService.deployNewBpmnWithString(bpmnXml);
+            if (!result.contains("ParseException"))
+                logger.info("---Deployed!---");
+            return result;
+        } catch (IOException e) {
+            logger.warn(e.getMessage());
+        }
+        return "Deployment failed";
+    }
+
+//    @DeleteMapping("")
+//    public String destroyBPMN(@RequestParam String id) {
+//        try {
+//
+//            return result;
+//        } catch (IOException e) {
+//            logger.warn(e.getMessage());
+//        }
+//        return "Deployment failed";
+//    }
 }
