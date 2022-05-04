@@ -41,14 +41,13 @@ public class DeployController {
         return "Deployment failed";
     }
 
-//    @DeleteMapping("")
-//    public String destroyBPMN(@RequestParam String id) {
-//        try {
-//
-//            return result;
-//        } catch (IOException e) {
-//            logger.warn(e.getMessage());
-//        }
-//        return "Deployment failed";
-//    }
+    @DeleteMapping("")
+    public boolean destroyBPMN(@RequestParam String definitionID) {
+        try {
+            return deploymentService.deleteProcess(definitionID);
+        } catch (IOException e) {
+            logger.warn(e.getMessage());
+        }
+        return false;
+    }
 }

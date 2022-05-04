@@ -17,10 +17,12 @@ import java.util.Objects;
 public class DeploymentService {
     private static final Logger logger = LoggerFactory.getLogger(EngineTaskService.class);
     private final ApplicationProperties applicationproperties;
+    private final OkHttpClient client;
 
     public DeploymentService(ApplicationProperties applicationProperties) {
         this.applicationproperties = applicationProperties;
         logger.info(logger.getName() + "- is started");
+        client = new OkHttpClient().newBuilder().build();
     }
 
     public String deployNewBpmn() throws IOException {
@@ -32,8 +34,6 @@ public class DeploymentService {
             e.printStackTrace();
         }
         if (file != null) {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
 //            MediaType mediaType = MediaType.parse("multipart/form-data");
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("upload", applicationproperties.getDeployment().getDeployName(),
@@ -63,8 +63,6 @@ public class DeploymentService {
     public String deployNewBpmnWithString(String xml) throws IOException {
         logger.info("start Deployment");
         Response response = null;
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("upload", applicationproperties.getDeployment().getDeployName(),
                         RequestBody.create(xml, MediaType.parse("application/octet-stream")))
@@ -80,10 +78,8 @@ public class DeploymentService {
                 JSONObject obj = new JSONObject(response.body().string());
                 String id = obj.getString("id");
                 logger.info("ID:+++++++" + id);
-//                JSONObject processDefinition = obj.getJSONObject("deployedProcessDefinitions");
-//                logger.info(processDefinition.toString());
-//                String processKey = processDefinition.names().getJSONArray(0).getString(2);
-//                logger.info("key:+++++++" + processKey);
+                String definitionID = obj.getJSONObject("deployedProcessDefinitions").keys().next().toString();
+                logger.warn(definitionID);
                 return obj.toString();
             }
         } catch (IOException e) {
@@ -95,5 +91,30 @@ public class DeploymentService {
                 response.close();
         }
         return "Deployment failed";
+    }
+
+    public boolean deleteProcess(String definitionID) throws IOException {
+        if (definitionID == null || definitionID.isBlank()) throw new IOException("no definitionID");
+        logger.info("start delete Deployment with definitionID: " + definitionID);
+
+        Response response = null;
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create("{}", JSON);
+        Request request = new Request.Builder()
+                .url("http://localhost:8080/engine-rest/process-definition/" + definitionID)
+                .method("DELETE", body)
+                .build();
+        try {
+            response = client.newCall(request).execute();
+            logger.info("end delete Deployment");
+            return response.code() == 200;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (response != null)
+                response.close();
+        }
     }
 }

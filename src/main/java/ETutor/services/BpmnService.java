@@ -47,6 +47,8 @@ public class BpmnService {
             return new TestEngineDTO(counter);
         }
         TestEngineDTO testEngineDTO;
+
+        // TODO build stub XML-valid check
         try {
             if (testConfig == null) {
                 throw new Exception("no Config");
