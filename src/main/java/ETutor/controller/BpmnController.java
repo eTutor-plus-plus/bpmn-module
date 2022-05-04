@@ -38,6 +38,7 @@ public class BpmnController {
         logger.info("Start Test with ID: " + processID);
         TestEngineDTO testResult = null;
         try {
+            logger.info("TestConfig: " + testConfigDTO.toString());
             testResult = bpmnService.startTest(processID, testConfigDTO);
         } catch (Exception e) {
             logger.warn("Failed: Exception " + e.getMessage());

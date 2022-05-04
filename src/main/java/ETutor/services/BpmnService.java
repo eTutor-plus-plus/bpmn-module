@@ -62,7 +62,6 @@ public class BpmnService {
             counter++;
             return new TestEngineDTO(counter);
         }
-        this.deleteProcess(key, testEngineDTO);
         logger.info(testEngineDTO.toString());
         return testEngineDTO;
     }
@@ -72,7 +71,7 @@ public class BpmnService {
             this.startProcess(key);
             TestConfigDTO testConfigDTO = this.readConfig();
             TestEngineDTO testEngineDTO = this.startTestEngine(key, testConfigDTO);
-            this.deleteProcess(key, testEngineDTO);
+            this.deleteProcess(key, testEngineDTO, true);
             logger.info(testEngineDTO.toString());
             return true;
         } catch (Exception e) {
@@ -89,10 +88,10 @@ public class BpmnService {
         if (instance == null) throw new Exception("No Process with Process ID: " + key + " is deployed");
     }
 
-    private void deleteProcess(String key, TestEngineDTO testEngineDTO) {
+    private void deleteProcess(String key, TestEngineDTO testEngineDTO, boolean testLastTask) {
         logger.info("Delete Process by: " + key);
         if (runtimeService.createProcessInstanceQuery().list().size() == 0) {
-            testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
+            if(testLastTask) testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
         } else {
             runtimeService.deleteProcessInstance(instance.getId(), null);
         }
@@ -118,10 +117,11 @@ public class BpmnService {
                 testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTasksInCorrectOrder(), testEngineDTO, taskService));
             }
             if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
-                this.deleteProcess(key, testEngineDTO);
+                this.deleteProcess(key, testEngineDTO, true);
                 this.startProcess(key);
                 testEngineDTO.testEngineRuntimeDTO.setContainsAllLabels(engineTaskService.tasksInProcess(testConfigDTO.getLabels(), testEngineDTO, taskService));
             }
+            this.deleteProcess(key, testEngineDTO,false);
         }
         return testEngineDTO;
     }

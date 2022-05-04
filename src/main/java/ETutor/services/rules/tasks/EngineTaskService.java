@@ -29,7 +29,7 @@ public class EngineTaskService {
                 Task task = taskQuery.singleResult();
                 if (this.taskNameNotEqual(task, name)) return false;
                 taskService.complete(task.getId());
-            } else {
+            } else if (taskQuery.list().size() >= 2) {
                 result = false;
                 testEngineDTO.testEngineRuntimeDTO.setProcessHaveParallelGateway(true);
                 for (Task task : taskQuery.list()) {
