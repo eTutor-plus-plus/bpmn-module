@@ -5,8 +5,6 @@ import ETutor.services.rules.tasks.EngineTaskService;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -75,17 +73,8 @@ public class DeploymentService {
         try {
             response = client.newCall(request).execute();
             if (response.body() != null) {
-                JSONObject obj = new JSONObject(response.body().string());
-                String id = obj.getString("id");
-                logger.info("ID:+++++++" + id);
-                String definitionID = obj.getJSONObject("deployedProcessDefinitions").keys().next().toString();
-                logger.warn(definitionID);
-                return obj.toString();
+                return response.body().string();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
         } finally {
             if (response != null)
                 response.close();
