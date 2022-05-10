@@ -32,7 +32,6 @@ public class DeploymentService {
             e.printStackTrace();
         }
         if (file != null) {
-//            MediaType mediaType = MediaType.parse("multipart/form-data");
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("upload", applicationproperties.getDeployment().getDeployName(),
                             RequestBody.create(file, MediaType.parse("application/octet-stream")))
@@ -87,8 +86,6 @@ public class DeploymentService {
         logger.info("start delete Deployment with definitionID: " + definitionID);
 
         Response response = null;
-//        OkHttpClient client = new OkHttpClient().newBuilder()
-//                .build();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create("{}", JSON);
         Request request = new Request.Builder()

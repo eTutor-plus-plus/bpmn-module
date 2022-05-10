@@ -1,7 +1,6 @@
 package ETutor.services;
 
 import ETutor.config.ApplicationProperties;
-import ETutor.dto.JsonReader;
 import ETutor.dto.entities.TestConfigDTO;
 import ETutor.dto.entities.TestEngineDTO;
 import ETutor.services.rules.tasks.EngineTaskService;
@@ -11,8 +10,6 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 
 @Service
@@ -66,22 +63,6 @@ public class BpmnService {
         return testEngineDTO;
     }
 
-    public boolean startTestWithOutRestJson(String key) {
-        try {
-            this.startProcess(key);
-            TestConfigDTO testConfigDTO = this.readConfig();
-            TestEngineDTO testEngineDTO = this.startTestEngine(key, testConfigDTO);
-            this.deleteProcess(key, testEngineDTO, true);
-            logger.info(testEngineDTO.toString());
-            return true;
-        } catch (Exception e) {
-            logger.warn("Failed: Exception " + e.getMessage());
-            if (instance != null)
-                runtimeService.deleteProcessInstance(instance.getId(), null);
-            return false;
-        }
-    }
-
     private void startProcess(String key) throws Exception {
         logger.info("Start Process by: " + key);
         instance = runtimeService.startProcessInstanceByKey(key);
@@ -91,22 +72,10 @@ public class BpmnService {
     private void deleteProcess(String key, TestEngineDTO testEngineDTO, boolean testLastTask) {
         logger.info("Delete Process by: " + key);
         if (runtimeService.createProcessInstanceQuery().list().size() == 0) {
-            if(testLastTask) testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
+            if (testLastTask) testEngineDTO.testEngineRuntimeDTO.setCanReachLastTask(true);
         } else {
             runtimeService.deleteProcessInstance(instance.getId(), null);
         }
-    }
-
-    private TestConfigDTO readConfig() throws Exception {
-        try {
-            logger.info("Start read JSON file");
-            TestConfigDTO config = new JsonReader(applicationProperties).readStaticJsonFile();
-            if (config == null) throw new IOException("no config");
-            return config;
-        } catch (IOException e) {
-            logger.warn(e.getMessage());
-        }
-        throw new Exception("no Config");
     }
 
     private TestEngineDTO startTestEngine(String key, TestConfigDTO testConfigDTO) throws Exception {
@@ -115,14 +84,42 @@ public class BpmnService {
         if (applicationProperties.getDeployment().isRuntimeStarted()) {
             if (testConfigDTO.getTasksInCorrectOrder() != null && testConfigDTO.getTasksInCorrectOrder().size() != 0) {
                 testEngineDTO.testEngineRuntimeDTO.setProcessInOrder(engineTaskService.checkNameInProcessOrder(testConfigDTO.getTasksInCorrectOrder(), testEngineDTO, taskService));
+                this.deleteProcess(key, testEngineDTO, true);
             }
             if (testConfigDTO.getLabels() != null && testConfigDTO.getLabels().size() != 0) {
-                this.deleteProcess(key, testEngineDTO, true);
                 this.startProcess(key);
                 testEngineDTO.testEngineRuntimeDTO.setContainsAllLabels(engineTaskService.tasksInProcess(testConfigDTO.getLabels(), testEngineDTO, taskService));
             }
-            this.deleteProcess(key, testEngineDTO,false);
+            this.deleteProcess(key, testEngineDTO, false);
         }
         return testEngineDTO;
     }
 }
+
+//    private TestConfigDTO readConfig() throws Exception {
+//        try {
+//            logger.info("Start read JSON file");
+//            TestConfigDTO config = new JsonReader(applicationProperties).readStaticJsonFile();
+//            if (config == null) throw new IOException("no config");
+//            return config;
+//        } catch (IOException e) {
+//            logger.warn(e.getMessage());
+//        }
+//        throw new Exception("no Config");
+//    }
+
+//    public boolean startTestWithOutRestJson(String key) {
+//        try {
+//            this.startProcess(key);
+//            TestConfigDTO testConfigDTO = this.readConfig();
+//            TestEngineDTO testEngineDTO = this.startTestEngine(key, testConfigDTO);
+//            this.deleteProcess(key, testEngineDTO, true);
+//            logger.info(testEngineDTO.toString());
+//            return true;
+//        } catch (Exception e) {
+//            logger.warn("Failed: Exception " + e.getMessage());
+//            if (instance != null)
+//                runtimeService.deleteProcessInstance(instance.getId(), null);
+//            return false;
+//        }
+//    }

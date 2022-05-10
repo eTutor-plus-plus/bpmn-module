@@ -20,15 +20,15 @@ public class DeployController {
         this.deploymentService = deploymentService;
     }
 
-//    @PostMapping("/static")
-//    public String deployBPMN() {
-//        try {
-//            return deploymentService.deployNewBpmn();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return "Deployment failed";
-//    }
+    @PostMapping("/static")
+    public String deployBPMN() {
+        try {
+            return deploymentService.deployNewBpmn();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Deployment failed";
+    }
 
     @PostMapping(path = "")
     public String deployBPMN(@RequestBody String bpmnXml) {
