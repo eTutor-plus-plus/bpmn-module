@@ -20,15 +20,6 @@ public class BpmnController {
         this.bpmnService = service;
     }
 
-    @GetMapping("")
-    public boolean startTestEngine() {
-        String startkey = "Teacher";
-        logger.info(logger.getName() + "start Test!");
-        boolean testResult = bpmnService.startTestWithOutRestJson(startkey);
-        logger.info("Test result: " + testResult);
-        return testResult;
-    }
-
     @PostMapping("")
     public TestEngineDTO startTestEngine(
             @RequestParam String processID,
@@ -47,3 +38,11 @@ public class BpmnController {
         return testResult;
     }
 }
+//    @GetMapping("")
+//    public boolean startTestEngine() {
+//        String startkey = "Teacher";
+//        logger.info(logger.getName() + "start Test!");
+//        boolean testResult = bpmnService.startTestWithOutRestJson(startkey);
+//        logger.info("Test result: " + testResult);
+//        return testResult;
+//    }
