@@ -26,11 +26,8 @@ public class DeploymentService {
     public String deployNewBpmn() throws IOException {
         Response response = null;
         File file = null;
-//        XmlMapper xmlMapper = new XmlMapper();
         try {
             file = new File("doc/bpmnTestDeploy/TestBpmn.bpmn");
-//            String xml = xmlMapper.writeValueAsString(file);
-//            logger.warn(xml);
         } catch (Exception e) {
             e.printStackTrace();
         }
