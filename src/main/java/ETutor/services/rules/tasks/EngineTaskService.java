@@ -1,6 +1,6 @@
 package ETutor.services.rules.tasks;
 
-import ETutor.dto.entities.TestEngineDTO;
+import ETutor.dto.entities.testEngine.TestEngineDTO;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;

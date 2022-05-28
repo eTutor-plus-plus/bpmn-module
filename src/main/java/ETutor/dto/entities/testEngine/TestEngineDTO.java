@@ -1,6 +1,4 @@
-package ETutor.dto.entities;
-
-import ETutor.dto.entities.testEngine.TestEngineRuntimeDTO;
+package ETutor.dto.entities.testEngine;
 
 public class TestEngineDTO {
     public TestEngineRuntimeDTO testEngineRuntimeDTO;

@@ -8,7 +8,6 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 @CrossOrigin
 @RestController
@@ -39,16 +38,6 @@ public class DeployController {
                 return result;
             } else {
                 JSONObject obj = new JSONObject(result);
-                String id = obj.getString("id");
-                logger.info("ID:+++++++" + id);
-                JSONObject responseObject = obj.getJSONObject("deployedProcessDefinitions");
-                Iterator definitionID = obj.getJSONObject("deployedProcessDefinitions").keys();
-                while (definitionID.hasNext()) {
-//                    logger.info(definitionID.next().toString());
-                    logger.info(responseObject.getJSONObject(definitionID.next().toString()).getString("key"));
-                }
-//                logger.warn(definitionID);
-                logger.info("---Deployed!---");
                 return obj.toString();
             }
         } catch (IOException e) {

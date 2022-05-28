@@ -1,7 +1,7 @@
 package ETutor.controller;
 
 import ETutor.dto.entities.TestConfigDTO;
-import ETutor.dto.entities.TestEngineDTO;
+import ETutor.dto.entities.testEngine.TestEngineDTO;
 import ETutor.services.BpmnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

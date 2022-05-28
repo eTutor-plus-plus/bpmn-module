@@ -2,7 +2,7 @@ package ETutor.services;
 
 import ETutor.config.ApplicationProperties;
 import ETutor.dto.entities.TestConfigDTO;
-import ETutor.dto.entities.TestEngineDTO;
+import ETutor.dto.entities.testEngine.TestEngineDTO;
 import ETutor.services.rules.tasks.EngineTaskService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
