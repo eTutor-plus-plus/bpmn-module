@@ -20,27 +20,30 @@ public class EngineTaskService {
         logger.info(logger.getName() + "- is started");
     }
 
-    public boolean checkNameInProcessOrder(List<String> names, TestEngineDTO testEngineDTO, TaskService taskService) {
+    public boolean checkNameInProcessOrder(List<String> labels, TestEngineDTO testEngineDTO, TaskService taskService) {
         TaskQuery taskQuery = taskService.createTaskQuery();
-        boolean result = true;
-        for (String name : names) {
-            name = name.trim();
-            if (taskQuery.list().size() == 1) {
-                Task task = taskQuery.singleResult();
-                if (this.taskNameNotEqual(task, name)) return false;
-                taskService.complete(task.getId());
-            } else if (taskQuery.list().size() >= 2) {
-                result = false;
-                testEngineDTO.testEngineRuntimeDTO.setProcessHaveParallelGateway(true);
-                for (Task task : taskQuery.list()) {
-                    logger.info("Except:" + task.getName() + " compare with " + name);
-                    if (task.getName().equals(name)) {
+        boolean result = false;
+        for (String label : labels) {
+            result = false;
+            label = label.trim();
+            while (!result) {
+                if (taskQuery.list().size() == 1) {
+                    Task task = taskQuery.singleResult();
+                    if (this.taskNameEqual(task, label)) result = true;
+                    taskService.complete(task.getId());
+                } else if (taskQuery.list().size() >= 2) {
+                    testEngineDTO.testEngineRuntimeDTO.setProcessHaveParallelGateway(true);
+                    for (Task task : taskQuery.list()) {
+                        logger.info("Except:" + task.getName() + " compare with " + label);
+                        if (task.getName().equals(label)) {
+                            result = true;
+                        }
                         taskService.complete(task.getId());
-                        result = true;
                     }
+                } else {
+                    return false;
                 }
             }
-            // TODO else path should check process end before last name is check
         }
         return result;
     }
@@ -74,17 +77,8 @@ public class EngineTaskService {
         return !map.containsValue(false);
     }
 
-    private boolean taskNameNotEqual(Task task, String name) {
+    private boolean taskNameEqual(Task task, String name) {
         logger.info("Except:" + task.getName() + " compare with " + name);
-        return !task.getName().equals(name);
+        return task.getName().equals(name);
     }
-    //    public boolean findTasks(List<String> names, TaskService taskService) {
-//        TaskQuery taskQuery = taskService.createTaskQuery();
-//        for (String name : names) {
-//            Task t = taskQuery.taskName(name).singleResult();
-//            logger.info("Except Find:" + name + "find Task: " + t);
-//            if (t == null) return false;
-//        }
-//        return true;
-//    }
 }
