@@ -64,6 +64,11 @@ public class BpmnService {
     }
 
     private void startProcess(String key) throws Exception {
+        if (runtimeService.createProcessInstanceQuery().list().size() > 0) {
+            runtimeService.createProcessInstanceQuery().list().forEach((storedInstance) -> {
+                runtimeService.deleteProcessInstance(storedInstance.getId(), null);
+            });
+        }
         logger.info("Start Process by: " + key);
         instance = runtimeService.startProcessInstanceByKey(key);
         if (instance == null) throw new Exception("No Process with Process ID: " + key + " is deployed");
