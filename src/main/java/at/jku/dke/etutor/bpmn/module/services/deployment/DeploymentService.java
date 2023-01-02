@@ -1,7 +1,7 @@
-package ETutor.services.deployment;
+package at.jku.dke.etutor.bpmn.module.services.deployment;
 
-import ETutor.config.ApplicationProperties;
-import ETutor.services.rules.tasks.EngineTaskService;
+import at.jku.dke.etutor.bpmn.module.config.ApplicationProperties;
+import at.jku.dke.etutor.bpmn.module.services.rules.tasks.EngineTaskService;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

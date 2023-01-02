@@ -1,6 +1,6 @@
-package ETutor.controller;
+package at.jku.dke.etutor.bpmn.module.controller;
 
-import ETutor.services.deployment.DeploymentService;
+import at.jku.dke.etutor.bpmn.module.services.deployment.DeploymentService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;

@@ -1,8 +1,8 @@
-package ETutor.controller;
+package at.jku.dke.etutor.bpmn.module.controller;
 
-import ETutor.dto.entities.TestConfigDTO;
-import ETutor.dto.entities.testEngine.TestEngineDTO;
-import ETutor.services.BpmnService;
+import at.jku.dke.etutor.bpmn.module.dto.entities.TestConfigDTO;
+import at.jku.dke.etutor.bpmn.module.dto.entities.testEngine.TestEngineDTO;
+import at.jku.dke.etutor.bpmn.module.services.BpmnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

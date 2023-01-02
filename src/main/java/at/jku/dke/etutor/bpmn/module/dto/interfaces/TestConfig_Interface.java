@@ -1,4 +1,4 @@
-package ETutor.dto.interfaces;
+package at.jku.dke.etutor.bpmn.module.dto.interfaces;
 
 import java.util.List;
 

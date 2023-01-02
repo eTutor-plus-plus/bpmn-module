@@ -1,6 +1,6 @@
-package ETutor.dto.entities;
+package at.jku.dke.etutor.bpmn.module.dto.entities;
 
-import ETutor.dto.interfaces.TestConfig_Interface;
+import at.jku.dke.etutor.bpmn.module.dto.interfaces.TestConfig_Interface;
 
 import java.util.List;
 

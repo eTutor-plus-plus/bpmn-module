@@ -1,4 +1,4 @@
-package ETutor.dto.entities.testEngine;
+package at.jku.dke.etutor.bpmn.module.dto.entities.testEngine;
 
 public class TestEngineRuntimeDTO {
 

@@ -1,9 +1,9 @@
-package ETutor.services;
+package at.jku.dke.etutor.bpmn.module.services;
 
-import ETutor.config.ApplicationProperties;
-import ETutor.dto.entities.TestConfigDTO;
-import ETutor.dto.entities.testEngine.TestEngineDTO;
-import ETutor.services.rules.tasks.EngineTaskService;
+import at.jku.dke.etutor.bpmn.module.config.ApplicationProperties;
+import at.jku.dke.etutor.bpmn.module.dto.entities.TestConfigDTO;
+import at.jku.dke.etutor.bpmn.module.dto.entities.testEngine.TestEngineDTO;
+import at.jku.dke.etutor.bpmn.module.services.rules.tasks.EngineTaskService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;

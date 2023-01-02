@@ -1,7 +1,7 @@
-package ETutor.dto;
+package at.jku.dke.etutor.bpmn.module.dto;
 
-import ETutor.config.ApplicationProperties;
-import ETutor.dto.entities.TestConfigDTO;
+import at.jku.dke.etutor.bpmn.module.config.ApplicationProperties;
+import at.jku.dke.etutor.bpmn.module.dto.entities.TestConfigDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

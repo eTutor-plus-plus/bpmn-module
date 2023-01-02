@@ -1,6 +1,6 @@
-package ETutor;
+package at.jku.dke.etutor.bpmn.module;
 
-import ETutor.config.ApplicationProperties;
+import at.jku.dke.etutor.bpmn.module.config.ApplicationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

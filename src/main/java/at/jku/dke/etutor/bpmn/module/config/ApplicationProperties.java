@@ -1,4 +1,4 @@
-package ETutor.config;
+package at.jku.dke.etutor.bpmn.module.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
